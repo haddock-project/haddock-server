@@ -1,7 +1,7 @@
-package Kontainerized
+package main
 
 import (
-	"github.com/Kalitsune/Kontainerized/routes"
+	"github.com/Kalitsune/Kontainerized/web/routes"
 	"github.com/gofiber/fiber/v2"
 	"log"
 )
