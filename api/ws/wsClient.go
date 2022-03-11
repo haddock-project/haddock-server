@@ -1,6 +1,8 @@
 package ws
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"github.com/gofiber/websocket/v2"
 )
@@ -18,9 +20,11 @@ var Websocket struct {
 }
 
 // Register a websocket connection to the cache
-func Register(conn *websocket.Conn) Client {
+func Register(conn *websocket.Conn) (Client, error) {
 
-	//generate an ID
+	/*
+		Generate an ID
+	*/
 	var clientId uint
 	if len(Websocket.AvailableIds) == 0 {
 		//add an ID
@@ -30,11 +34,33 @@ func Register(conn *websocket.Conn) Client {
 		clientId, Websocket.AvailableIds = Websocket.AvailableIds[0], Websocket.AvailableIds[1:]
 	}
 
-	//add client to known clients
-	client := Client{Id: clientId, Conn: conn}
+	/*
+		Generate a token for the client (to reference the websocket using the rest API)
+	*/
+	b := make([]byte, 24)
+	_, err := rand.Read(b)
+	token := hex.EncodeToString(b)
+
+	/*
+		Add client to known clients
+	*/
+	client := Client{Id: clientId, Conn: conn, Token: token}
 	Websocket.Clients = append(Websocket.Clients, &client)
 
-	return client
+	//handle token generation error
+	if err != nil {
+		client.CloseConnection("failed to generate a token")
+	}
+
+	/*
+		Send connection event
+	*/
+	event := fmt.Sprintf(`{"name": "CONNECT", "args": {"token": "%s"}}`, token)
+	if err := client.Conn.WriteMessage(websocket.TextMessage, []byte(event)); err != nil {
+		return Client{}, err
+	}
+
+	return client, nil
 }
 
 // RemoveClientId removes a client from the cache from ID
