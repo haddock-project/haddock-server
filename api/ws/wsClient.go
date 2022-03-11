@@ -65,7 +65,7 @@ func Register(conn *websocket.Conn) (Client, error) {
 
 // RemoveClientId removes a client from the cache from ID
 func RemoveClientId(id uint) {
-	//the connection has been closed so remove it
+	//search the client index
 	wsIndex := 0
 	for index, c := range Websocket.Clients {
 		//check if the ID match
@@ -82,6 +82,17 @@ func RemoveClientId(id uint) {
 
 	// add ID to available IDS
 	Websocket.AvailableIds = append(Websocket.AvailableIds, id)
+}
+
+func GetClientByToken(token string) *Client {
+	//search the client index
+	for _, c := range Websocket.Clients {
+		//check if the ID match
+		if c.Token == token {
+			return c
+		}
+	}
+	return nil
 }
 
 func (client *Client) CloseConnection(reason string) {
