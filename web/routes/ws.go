@@ -2,6 +2,7 @@ package routes
 
 import (
 	"encoding/json"
+	"github.com/Kalitsune/Kontainerized/api/ws"
 	"github.com/gofiber/websocket/v2"
 )
 
@@ -13,11 +14,14 @@ func wsHandler(c *websocket.Conn) {
 		}
 	)
 
+	//save the connection to be able to send events
+	ws.Register(c)
+
 	//main listening loop
 	for {
 		err := c.ReadJSON(&request)
 		if err != nil {
-			return 
+			return
 		}
 	}
 }
