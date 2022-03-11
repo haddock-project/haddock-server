@@ -15,3 +15,29 @@
 # vendor/
 
 .idea/
+
+
+# front
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/reactjs/node_modules
+/reactjs/.pnp
+.pnp.js
+
+# testing
+/reactjs/coverage
+
+# production
+/reactjs/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
