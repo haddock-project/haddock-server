@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/Kalitsune/Kontainerized/api/commands"
+	"github.com/Kalitsune/Haddock/api/commands"
 	"github.com/gofiber/fiber/v2"
 )
 

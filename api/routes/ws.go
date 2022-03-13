@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Kalitsune/Kontainerized/api/events"
-	"github.com/Kalitsune/Kontainerized/api/ws"
+	"github.com/Kalitsune/Haddock/api/events"
+	"github.com/Kalitsune/Haddock/api/ws"
 	"github.com/gofiber/websocket/v2"
 )
 

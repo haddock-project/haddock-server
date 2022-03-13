@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/Kalitsune/Kontainerized/api/routes/api"
+	"github.com/Kalitsune/Haddock/api/routes/api"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 )

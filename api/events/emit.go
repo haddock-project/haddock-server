@@ -1,6 +1,6 @@
 package events
 
-import "github.com/Kalitsune/Kontainerized/api/ws"
+import "github.com/Kalitsune/Haddock/api/ws"
 
 func (event *Event) Send(target *ws.Client) error {
 	/*

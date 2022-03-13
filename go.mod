@@ -1,4 +1,4 @@
-module github.com/Kalitsune/Kontainerized
+module github.com/Kalitsune/Haddock
 
 go 1.18
 

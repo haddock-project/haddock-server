@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/Kalitsune/Kontainerized/api/docker"
-	"github.com/Kalitsune/Kontainerized/api/routes"
+	"github.com/Kalitsune/Haddock/api/docker"
+	"github.com/Kalitsune/Haddock/api/routes"
 	"github.com/gofiber/fiber/v2"
 	"log"
 )

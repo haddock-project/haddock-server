@@ -2,7 +2,7 @@ package commands
 
 import (
 	"context"
-	"github.com/Kalitsune/Kontainerized/api/docker"
+	"github.com/Kalitsune/Haddock/api/docker"
 	"github.com/docker/docker/api/types"
 	"github.com/gofiber/fiber/v2"
 )

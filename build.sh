@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build --tag kontainerized .
+docker build --tag Haddock .
