@@ -7,10 +7,11 @@ FROM golang:alpine AS build
 
 WORKDIR /app
 
-COPY ["go.sum", "go.mod", "./"]
+COPY . .
 RUN go mod download
 
-COPY . .
+# needed to run cgo packages
+RUN apk add build-base
 
 RUN go build -o /Haddock
 

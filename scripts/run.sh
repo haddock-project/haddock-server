@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker run -v /var/run/docker.sock:/var/run/docker.sock haddock-server
+docker run -v ~/haddock/server/persistent/:/data/ -v /var/run/docker.sock:/var/run/docker.sock haddock-server
