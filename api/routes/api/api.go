@@ -10,11 +10,11 @@ func Init(app *fiber.App) {
 		Define the routes
 	*/
 	api := app.Group("/api")
-	container := api.Group("/container")
+	container := api.Group("/app")
 
 	/*
 		Containers
 	*/
-	container.Get("/:app?", commands.GetApp)
-	container.Post("/:app", commands.PostApp)
+	container.Get("/", commands.GetApp)
+	container.Post("/", commands.PostApp)
 }
