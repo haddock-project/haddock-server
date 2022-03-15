@@ -2,7 +2,7 @@ package events
 
 import (
 	"fmt"
-	"github.com/Kalitsune/Haddock/api/ws"
+	"github.com/Kalitsune/Haddock/server/ws"
 	"log"
 )
 

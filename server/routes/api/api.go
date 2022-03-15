@@ -13,7 +13,7 @@ func Init(app *fiber.App) {
 	container := api.Group("/app")
 
 	/*
-		Containers
+		App
 	*/
 	container.Get("/", commands.GetApp)
 	container.Post("/", commands.PostApp)

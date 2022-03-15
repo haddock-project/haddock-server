@@ -5,10 +5,24 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Kalitsune/Haddock/api/events"
-	"github.com/Kalitsune/Haddock/api/ws"
+	"github.com/Kalitsune/Haddock/server/ws"
+	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 )
 
+func wsAuthenticator(ctx *fiber.Ctx) error {
+	// if the client requested upgrade to the WebSocket protocol.
+	if websocket.IsWebSocketUpgrade(ctx) {
+		//check if the client provided a token
+		token := ctx.Get("token")
+		if token != "" {
+			//TODO: check token validity
+			return ctx.Next()
+		}
+		return fiber.ErrBadRequest
+	}
+	return fiber.ErrUpgradeRequired
+}
 func wsHandler(c *websocket.Conn) {
 	var (
 		request struct {

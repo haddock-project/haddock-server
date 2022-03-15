@@ -1,18 +1,15 @@
 package routes
 
 import (
-	"github.com/Kalitsune/Haddock/api/routes/api"
+	"github.com/Kalitsune/Haddock/server/routes/api"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 )
 
 func Init(app *fiber.App) {
-	//home page
-	//home := app.Group("/home")
-	//home.Get("/")
-
 	//ws routing
 	ws := app.Group("/ws")
+	ws.Use("/", wsAuthenticator)
 	ws.Get("/", websocket.New(wsHandler))
 
 	//api.go routing
