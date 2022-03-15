@@ -2,13 +2,13 @@ package commands
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	"github.com/Kalitsune/Haddock/api/docker"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/gofiber/fiber/v2"
-	"io"
-	"strings"
+	"log"
+	"time"
 )
 
 type image struct {
@@ -69,62 +69,45 @@ func GetApp(ctx *fiber.Ctx) error {
 }
 
 func PostApp(ctx *fiber.Ctx) error {
-	var image = ctx.Query("image")
+	var img = ctx.Query("image")
 
-	if image == "" {
+	if img == "" {
 		/*
 			There is a missing argument
 		*/
 		return fiber.ErrBadRequest
 	}
 
+	/*
+		Check if the image is valid with a 10s timeout
+	*/
+	//create the timeout and a cancel func
+	timeout, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	//search the image on docker hub
+	search, err := docker.Client.ImageSearch(timeout, img, types.ImageSearchOptions{Limit: 1})
+	//handle timeout error
+	if errors.Is(err, context.DeadlineExceeded) {
+		cancel()
+		return fiber.ErrRequestTimeout
+	}
+
+	// no image has been found
+	if len(search) == 0 {
+		cancel()
+		return fiber.ErrBadRequest
+	}
+
+	/*
+		Download the image and handle the decoding/event delivery
+	*/
+	go func(cancel context.CancelFunc) {
+		log.Println("Pulling a new image: ", img)
+		docker.PullImage(img)
+		cancel()
+	}(cancel)
+
 	//say that the server will process the command (the download time may raise a timed out error)
 	ctx.SendString("OK")
-
-	//pull the image
-	events, err := docker.Client.ImagePull(context.Background(), image, types.ImagePullOptions{})
-	if err != nil {
-		panic(err)
-	}
-
-	//start a json decoder
-	d := json.NewDecoder(events)
-	type Event struct {
-		Status         string `json:"status"`
-		Error          string `json:"error"`
-		ProgressDetail struct {
-			Current int `json:"current"`
-			Total   int `json:"total"`
-		} `json:"progressDetail"`
-	}
-
-	//read the flux
-	var event *Event
-	for {
-		//decode / handle decoding error
-		if err := d.Decode(&event); err != nil {
-			if err == io.EOF {
-				break
-			}
-
-			panic(err)
-		}
-
-		//check if the download is done
-		done := strings.HasPrefix(event.Status, "Image is up to date for ") || strings.HasPrefix(event.Status, "Downloaded newer image for ")
-
-		//send an adapted event
-		if event.Error != "" {
-			//send an error event
-		} else if event.Status == "Downloading" {
-			// send a download event
-		} else if event.Status == "Extracting" {
-			//send an extract event
-		} else if done {
-			//send a download complete
-		}
-		//TODO send event
-	}
 
 	return nil
 }

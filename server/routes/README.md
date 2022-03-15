@@ -36,3 +36,28 @@ List all Haddock's images
 
 ### Args
 **`app`:** (optional) filters the results (e.g. `?app=busybox`)
+
+### Events
+**`APP_DOWNLOAD_ERROR`:** tells that an error has occurred while downloading the app<br/>
+- `image_name`: the concerned image
+
+<br/>
+
+**`APP_DOWNLOAD_COMPLETE`:** tells that an app have been successfully downloaded <br/>
+- `image_name`: the concerned image
+
+<br/>
+
+**`APP_DOWNLOAD_PROGRESS`:** 
+- `image_name`: the concerned image
+- `progress`:
+  - `current`: the number of bytes downloaded
+  - `total`: the total number of bytes to download
+
+<br/>
+
+**`APP_EXTRACT_PROGRESS`:** <br/>
+- `image_name`: the concerned image
+- `progress`:
+    - `current`: the number of bytes downloaded
+    - `total`: the total number of bytes to download
