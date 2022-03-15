@@ -24,5 +24,5 @@ func InternalError(client *ws.Client, msg string, args InternalErrorArgs) {
 	*/
 	msg = fmt.Sprintf(`{"reason": "%s"}`, msg)
 	event := Event{Name: "ERROR", Args: []byte(msg)}
-	event.Send(client)
+	event.Send("")
 }

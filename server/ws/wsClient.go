@@ -52,14 +52,6 @@ func Register(conn *websocket.Conn) (Client, error) {
 		client.CloseConnection("failed to generate a token")
 	}
 
-	/*
-		Send connection event
-	*/
-	event := fmt.Sprintf(`{"name": "CONNECT", "args": {"token": "%s"}}`, token)
-	if err := client.Conn.WriteMessage(websocket.TextMessage, []byte(event)); err != nil {
-		return Client{}, err
-	}
-
 	return client, nil
 }
 

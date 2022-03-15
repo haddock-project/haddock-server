@@ -13,13 +13,7 @@ import (
 func wsAuthenticator(ctx *fiber.Ctx) error {
 	// if the client requested upgrade to the WebSocket protocol.
 	if websocket.IsWebSocketUpgrade(ctx) {
-		//check if the client provided a token
-		token := ctx.Get("token")
-		if token != "" {
-			//TODO: check token validity
-			return ctx.Next()
-		}
-		return fiber.ErrBadRequest
+		return ctx.Next()
 	}
 	return fiber.ErrUpgradeRequired
 }
