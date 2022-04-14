@@ -17,4 +17,6 @@ func Init(app *fiber.App) {
 	*/
 	container.Get("/", commands.GetApp)
 	container.Post("/", commands.PostApp)
+	container.Delete("/", commands.DeleteApp) //TODO: test
+	//NOTE: <3 github copilot
 }

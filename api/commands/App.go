@@ -16,6 +16,7 @@ type image struct {
 	Id   string   `json:"id"`
 }
 
+//GetApp returns processed images
 func GetApp(ctx *fiber.Ctx) error {
 	var (
 		q      = ctx.Query("image")
@@ -52,7 +53,6 @@ func GetApp(ctx *fiber.Ctx) error {
 		for _, c := range images {
 			// for each iteration, append a new image in the array
 			body = append(body, image{Name: c.RepoTags, Id: c.ID})
-			//TODO: include state of owned containers
 		}
 
 		/*
@@ -68,6 +68,7 @@ func GetApp(ctx *fiber.Ctx) error {
 	}
 }
 
+//PostApp download a new image
 func PostApp(ctx *fiber.Ctx) error {
 	var img = ctx.Query("image")
 
@@ -107,7 +108,31 @@ func PostApp(ctx *fiber.Ctx) error {
 	}(cancel)
 
 	//say that the server will process the command (the download time may raise a timed out error)
-	ctx.SendString("OK")
+	return ctx.JSON(fiber.Map{
+		"status": "ok",
+	})
+}
 
-	return nil
+//DeleteApp removes an image from the docker daemon
+func DeleteApp(ctx *fiber.Ctx) error {
+	var img = ctx.Query("image")
+
+	if img == "" {
+		/*
+			There is a missing argument
+		*/
+		return fiber.ErrBadRequest
+	}
+
+	/*
+		Remove the image
+	*/
+	_, err := docker.Client.ImageRemove(context.Background(), img, types.ImageRemoveOptions{Force: true})
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(fiber.Map{
+		"message": "Image removed",
+	})
 }
