@@ -10,7 +10,7 @@ It's the entrypoint of the websocket
 connect to receive events from the api.
 
 ###Args
-**`token`:** (optional) if accounts are enabled it is needed to authenticate
+**`token`:** auth token (not implemented yet)
 
 
 
@@ -32,10 +32,10 @@ List all Haddock's images
 POST http://dummy-host.com/api/app?app=xxxxxx
 ```
 ### Description
-List all Haddock's images
+Download a new Haddock image
 
 ### Args
-**`app`:** (optional) filters the results (e.g. `?app=busybox`)
+**`app`:** the dockerhub ID of the app you want to download (e.g. `?app=busybox`)
 
 ### Events
 **`APP_DOWNLOAD_ERROR`:** tells that an error has occurred while downloading the app<br/>
@@ -61,3 +61,13 @@ List all Haddock's images
 - `progress`:
     - `current`: the number of bytes downloaded
     - `total`: the total number of bytes to download
+
+## DELETE /api/app
+```http request
+DELETE http://dummy-host.com/api/app?app=xxxxxx
+```
+### Description
+remove a Haddock image
+
+### Args
+**`app`:** the dockerhub ID of the app you want to remove (e.g. `?app=busybox`)
