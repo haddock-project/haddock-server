@@ -1,9 +1,11 @@
 # routes
 here you can find a description of existing the api routes and the expected arguments
 
-## GET /ws
+# /API node
+
+## GET /api/ws
 ```http request
-GET http://dummy-host.com/ws?token=xxxxxx
+GET http://dummy-host.com/api/ws?token=xxxxxx
 ```
 ### Description
 It's the entrypoint of the websocket

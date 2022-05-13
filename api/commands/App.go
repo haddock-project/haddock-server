@@ -19,7 +19,7 @@ type image struct {
 //GetApp returns processed images
 func GetApp(ctx *fiber.Ctx) error {
 	var (
-		q      = ctx.Query("image")
+		q      = ctx.Query("app")
 		images []types.ImageSummary
 		err    error
 		opt    types.ImageListOptions
@@ -70,7 +70,7 @@ func GetApp(ctx *fiber.Ctx) error {
 
 //PostApp download a new image
 func PostApp(ctx *fiber.Ctx) error {
-	var img = ctx.Query("image")
+	var img = ctx.Query("app")
 
 	if img == "" {
 		/*
@@ -115,7 +115,7 @@ func PostApp(ctx *fiber.Ctx) error {
 
 //DeleteApp removes an image from the docker daemon
 func DeleteApp(ctx *fiber.Ctx) error {
-	var img = ctx.Query("image")
+	var img = ctx.Query("app")
 
 	if img == "" {
 		/*
