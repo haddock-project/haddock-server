@@ -24,6 +24,13 @@ func main() {
 	database.Init()
 	log.Println("Sqlite ready!")
 
+	// ensure server's private key is generated
+	if key := config.GetPrivateKey(); key == "" {
+		log.Println("Generating server's private key...")
+		config.GeneratePrivateKey()
+		log.Println("Server's private key generated!")
+	}
+
 	//create webserver using https://github.com/gofiber/fiber
 	app := fiber.New()
 
