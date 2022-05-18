@@ -26,12 +26,12 @@ func initTables() error {
 	var err error
 
 	//init the user table
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS `users` (`user_name` varchar(255) NOT NULL PRIMARY KEY,`user_password` varchar(255) NOT NULL);")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS `users` (`user_name` varchar(255) NOT NULL PRIMARY KEY,`user_password` varchar(255) NOT NULL, `password_reset` BOOLEAN NOT NULL CHECK (password_reset IN (0, 1)));")
 	if err != nil {
 		return err
 	}
 
-	//init the user table
+	//init the app table
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS `apps` ( `app_id` INTEGER PRIMARY KEY AUTOINCREMENT, `app_name` varchar(255) NOT NULL, `app_icon` varchar(255) NOT NULL, `app_description` varchar(255) NOT NULL, `app_url` varchar(255) NOT NULL, `repo_url` varchar(255) NOT NULL, `repo_name` varchar(255) NOT NULL);")
 	if err != nil {
 		return err
