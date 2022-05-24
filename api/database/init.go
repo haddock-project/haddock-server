@@ -32,7 +32,7 @@ func initTables() error {
 	}
 
 	//init the app table
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS `apps` ( `app_id` INTEGER PRIMARY KEY AUTOINCREMENT, `app_name` varchar(255) NOT NULL, `app_icon` varchar(255) NOT NULL, `app_description` varchar(255) NOT NULL, `app_url` varchar(255) NOT NULL, `repo_url` varchar(255) NOT NULL, `repo_name` varchar(255) NOT NULL);")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS `apps` ( `app_id` INTEGER PRIMARY KEY AUTOINCREMENT, `app_name` varchar(255) NOT NULL, `app_icon` varchar(255) NOT NULL, `app_description` varchar(500) NOT NULL, `app_url` varchar(255) NOT NULL, `repo_url` varchar(255) NOT NULL, `repo_name` varchar(255) NOT NULL);")
 	if err != nil {
 		return err
 	}
