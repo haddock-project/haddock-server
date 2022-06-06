@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Kalitsune/Haddock/api/database"
 	"github.com/Kalitsune/Haddock/api/docker"
+	"github.com/Kalitsune/Haddock/api/storage"
 	"github.com/Kalitsune/Haddock/server/config"
 	"github.com/Kalitsune/Haddock/server/routes"
 	"github.com/gofiber/fiber/v2"
@@ -23,6 +24,10 @@ func main() {
 	//init database
 	database.Init()
 	log.Println("Sqlite ready!")
+
+	//init Api
+	storage.InitApps()
+	log.Println("Storage ready!")
 
 	// ensure server's private key is generated
 	if key := config.GetPrivateKey(); key == "" {

@@ -45,3 +45,5 @@ yarn-error.log*
 data/server.properties
 
 data/sql.db
+
+data/icons/
