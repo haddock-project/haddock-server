@@ -5,10 +5,8 @@ import (
 	"errors"
 	"github.com/Kalitsune/Haddock/api/docker"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/filters"
 	"github.com/gofiber/fiber/v2"
 	"log"
-	"time"
 )
 
 type image struct {
@@ -20,29 +18,13 @@ type image struct {
 func GetApp(ctx *fiber.Ctx) error {
 	var (
 		q      = ctx.Query("app")
-		images []types.ImageSummary
 		err    error
-		opt    types.ImageListOptions
+		images []types.ImageSummary
 	)
 
-	/*
-		Get containers
-	*/
-
-	//if a repo name has been provided, filter it
-	if q != "" {
-		//filter for a specific repository
-		filter := filters.NewArgs(filters.Arg("reference", q+"*"))
-		opt = types.ImageListOptions{Filters: filter}
-	} else {
-		// returns a blank filter
-		opt = types.ImageListOptions{}
-	}
-
-	// ask the docker daemon
-	images, err = docker.Client.ImageList(context.Background(), opt)
+	images, err = docker.GetContainers(q)
 	if err != nil {
-		return err
+		return fiber.ErrInternalServerError
 	}
 
 	if len(images) > 0 {
@@ -80,32 +62,29 @@ func PostApp(ctx *fiber.Ctx) error {
 	}
 
 	/*
-		Check if the image is valid with a 10s timeout
+		Check if the image is valid
 	*/
-	//create the timeout and a cancel func
-	timeout, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	//search the image on docker hub
-	search, err := docker.Client.ImageSearch(timeout, img, types.ImageSearchOptions{Limit: 1})
-	//handle timeout error
-	if errors.Is(err, context.DeadlineExceeded) {
-		cancel()
-		return fiber.ErrRequestTimeout
+	search, err := docker.SearchImage(img)
+	if err != nil {
+		//handle timeout error
+		if errors.Is(err, context.DeadlineExceeded) {
+			return fiber.ErrRequestTimeout
+		}
+		return fiber.ErrInternalServerError
 	}
 
 	// no image has been found
 	if len(search) == 0 {
-		cancel()
 		return fiber.ErrBadRequest
 	}
 
 	/*
 		Download the image and handle the decoding/event delivery
 	*/
-	go func(cancel context.CancelFunc) {
+	go func() {
 		log.Println("Pulling a new image: ", img)
 		docker.PullImage(img)
-		cancel()
-	}(cancel)
+	}()
 
 	//say that the server will process the command (the download time may raise a timed out error)
 	return ctx.JSON(fiber.Map{

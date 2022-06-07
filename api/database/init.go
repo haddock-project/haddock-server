@@ -38,7 +38,7 @@ func initTables() error {
 	}
 
 	//init the apps_user table
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS `apps_users` ( `app_id` int(11) NOT NULL, `user_name` varchar(255) NOT NULL, FOREIGN KEY (`app_id`) REFERENCES `apps` (`app_id`), FOREIGN KEY (`user_name`) REFERENCES `users` (`user_name`) );")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS `apps_users` ( `app_id` int NOT NULL, `user_name` varchar(255) NOT NULL, FOREIGN KEY (`app_id`) REFERENCES `apps` (`app_id`), FOREIGN KEY (`user_name`) REFERENCES `users` (`user_name`) );")
 	if err != nil {
 		return err
 	}

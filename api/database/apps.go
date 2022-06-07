@@ -1,7 +1,7 @@
 package database
 
 type App struct {
-	Id          int    `json:"id"`
+	Id          uint16 `json:"id"`
 	Name        string `json:"name"`
 	Icon        string `json:"icon"`
 	Description string `json:"description"`
@@ -20,7 +20,7 @@ func AddApp(app App) (App, error) {
 	}
 
 	//get the app id
-	var id int
+	var id uint16
 	err = db.QueryRow("SELECT app_id FROM apps WHERE app_name = ?", app.Name).Scan(&id)
 	if err != nil {
 		return app, err
@@ -33,7 +33,7 @@ func AddApp(app App) (App, error) {
 }
 
 // GetAppFromID takes an ID and returns the app
-func GetAppFromID(id int) (App, error) {
+func GetAppFromID(id uint16) (App, error) {
 	var app App
 
 	err := db.QueryRow("SELECT app_name, app_icon, app_description, app_url, repo_url, repo_name FROM apps WHERE app_id = ?", id).Scan(&app.Name, &app.Icon, &app.Description, &app.AppUrl, &app.RepoUrl, &app.RepoName)
@@ -47,7 +47,7 @@ func GetAppFromID(id int) (App, error) {
 }
 
 //DeleteApp delete an app from the db as well as all its files
-func DeleteApp(id int) error {
+func DeleteApp(id uint16) error {
 	_, err := db.Exec("DELETE FROM apps WHERE app_id = ?", id)
 	if err != nil {
 		return err
