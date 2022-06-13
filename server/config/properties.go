@@ -10,6 +10,10 @@ func GetallowAnonymousUsers() bool {
 	return props.GetBool("allowAnonymousUsers", false)
 }
 
+func GetDebugMode() bool {
+	return props.GetBool("debugMode", false)
+}
+
 func GetPrivateKey() string {
 	return props.GetString("privateKey", "")
 }
