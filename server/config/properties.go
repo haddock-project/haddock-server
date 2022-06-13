@@ -3,7 +3,6 @@ package config
 import (
 	"log"
 	"math/rand"
-	"os"
 )
 
 func GetallowAnonymousUsers() bool {
@@ -26,18 +25,14 @@ func GeneratePrivateKey() {
 		log.Fatal("Error generating private key")
 	}
 
-	//append to data/server.properties file
-	file, err := os.OpenFile("data/server.properties", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 600)
-	if err != nil {
-		log.Fatalln("Error while generating the private key: ", err)
-	}
-	_, err = file.WriteString("\nprivateKey=" + string(privateKey))
-	if err != nil {
-		log.Fatalln("Error while generating the private key: ", err)
-	}
-
+	//update the property
 	_, _, err = props.Set("privateKey", string(privateKey))
 	if err != nil {
 		log.Fatalln("Failed to generate private key, try to restart: \n", err)
+	}
+
+	//save the new property
+	if err := Save(props); err != nil {
+		log.Fatalln("Failed to save private key, try to restart: \n", err)
 	}
 }
