@@ -1,57 +1,60 @@
 package database
 
+import (
+	"encoding/base64"
+	"github.com/google/uuid"
+	"log"
+	"net/http"
+	"strings"
+)
+
 type App struct {
-	Id          uint16 `json:"id"`
-	Name        string `json:"name"`
-	Icon        string `json:"icon"`
-	Description string `json:"description"`
-	AppUrl      string `json:"app_url"`
-	RepoUrl     string
-	RepoName    string
+	UUID        uuid.UUID `json:"uuid"`
+	Name        string    `json:"name"`
+	Icon        string    `json:"icon"` //base64 encoded image
+	Description string    `json:"description"`
+	AppUrl      string    `json:"app_url"`
+	Version     string    `json:"version"`
+	RepoUrl     string    `json:"repo_url"`
+	RepoName    string    `json:"repo_name"`
 }
 
-//AddApp bundle a container with infos about the app (it also generates a database id)
-func AddApp(app App) (App, error) {
+//Set bundle a container with infos about the app (it also generates a database id)
+func (app *App) Set() error {
+	//check if the icon field is an image
+	app.CheckIcon()
 
-	// insert the app into the database
-	_, err := db.Exec("INSERT INTO apps (app_name, app_icon, app_description, app_url, repo_url, repo_name) VALUES (?, ?, ?, ?, ?, ?)", app.Name, app.Icon, app.Description, app.AppUrl, app.RepoUrl, app.RepoName)
-	if err != nil {
-		return app, err
-	}
+	// insert the app into the database / update
+	_, err := db.Exec("INSERT INTO apps (app_uuid, app_name, app_icon, app_description, app_version, app_url, repo_url, repo_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"+
+		"ON CONFLICT(app_uuid) DO UPDATE SET (app_name, app_icon, app_description, app_version, app_url, repo_url, repo_name) = (?, ?, ?, ?, ?, ?, ?)", app.UUID, app.Name, app.Icon, app.Description, app.Version, app.AppUrl, app.RepoUrl, app.RepoName, app.Name, app.Icon, app.Description, app.Version, app.AppUrl, app.RepoUrl, app.RepoName)
 
-	//get the app id
-	var id uint16
-	err = db.QueryRow("SELECT app_id FROM apps WHERE app_name = ?", app.Name).Scan(&id)
-	if err != nil {
-		return app, err
-	}
-
-	//set the app id
-	app.Id = id
-
-	return app, nil
+	return err
 }
 
-// GetAppFromID takes an ID and returns the app
-func GetAppFromID(id uint16) (App, error) {
-	var app App
-
-	err := db.QueryRow("SELECT app_name, app_icon, app_description, app_url, repo_url, repo_name FROM apps WHERE app_id = ?", id).Scan(&app.Name, &app.Icon, &app.Description, &app.AppUrl, &app.RepoUrl, &app.RepoName)
-	if err != nil {
-		return app, err
-	}
-
-	app.Id = id
-
-	return app, nil
+// Get takes a UUID and returns the app
+func (app *App) Get() error {
+	err := db.QueryRow("SELECT app_name, app_icon, app_description, app_url, repo_url, repo_name FROM apps WHERE app_uuid = ?", app.UUID).Scan(&app.Name, &app.Icon, &app.Description, &app.AppUrl, &app.RepoUrl, &app.RepoName)
+	return err
 }
 
-//DeleteApp delete an app from the db as well as all its files
-func DeleteApp(id uint16) error {
-	_, err := db.Exec("DELETE FROM apps WHERE app_id = ?", id)
+//Delete an app from the db
+func (app *App) Delete() error {
+	_, err := db.Exec("DELETE FROM apps WHERE app_uuid = ?", app.UUID)
+	return err
+}
+
+//CheckIcon clear the icon if it's not an image
+func (app *App) CheckIcon() {
+	//Get the image from the byte stream
+	decodeString, err := base64.StdEncoding.DecodeString(app.Icon)
 	if err != nil {
-		return err
+		log.Println("Warning: invalid icon for \"", app.Name, "\". Icon cleared.")
+		app.Icon = ""
 	}
 
-	return nil
+	//detect content type, if the mime doesn't start with "image/" then the image is considered as invalid
+	if mime := http.DetectContentType(decodeString); !strings.HasPrefix(mime, "image/") {
+		log.Println("Warning: invalid icon for \"", app.Name, "\". Icon cleared.")
+		app.Icon = ""
+	}
 }

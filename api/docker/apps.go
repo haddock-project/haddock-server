@@ -3,8 +3,10 @@ package docker
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/Kalitsune/Haddock/api/events"
+	"github.com/Kalitsune/Haddock/utils"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/registry"
@@ -44,14 +46,15 @@ func SearchImage(query string) ([]registry.SearchResult, error) {
 	return Client.ImageSearch(timeout, query, types.ImageSearchOptions{Limit: 1})
 }
 
-func PullImage(image string) {
+func PullImage(image string) error {
 	stream, err := Client.ImagePull(context.Background(), image, types.ImagePullOptions{})
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	//decode and send events
 	decodePullStream(stream, image)
+	return nil
 }
 
 func decodePullStream(stream io.ReadCloser, image string) {
@@ -95,6 +98,8 @@ func decodePullStream(stream io.ReadCloser, image string) {
 			*/
 			name = "APP_DOWNLOAD_ERROR"
 			args = fmt.Sprintf(`{"name":"%s","error":"%s"}`, image, pullEvent.Error)
+
+			utils.HandleError("[ERROR] unable to download the image: "+image, errors.New(pullEvent.Error))
 
 		} else if done {
 			/*

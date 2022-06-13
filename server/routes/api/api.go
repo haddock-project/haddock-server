@@ -26,5 +26,6 @@ func Init(app *fiber.App) {
 	*/
 	container.Get("/", commands.GetApp)
 	container.Post("/", commands.PostApp)
+	container.Patch("/", commands.PatchImage)
 	container.Delete("/", commands.DeleteApp) //TODO: test
 }

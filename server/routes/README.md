@@ -31,13 +31,13 @@ List all Haddock's images
 
 ## POST /api/app
 ```http request
-POST http://dummy-host.com/api/app?app=xxxxxx
+POST http://dummy-host.com/api/app
 ```
 ### Description
-Download a new Haddock image
+Create a new Haddock app
 
-### Args
-**`app`:** the dockerhub ID of the app you want to download (e.g. `?app=busybox`)
+### Body
+A [JSON representation](../../api/database/apps.go) of the app, if an UUID is provided it will be overwritten.
 
 ### Events
 **`APP_DOWNLOAD_ERROR`:** tells that an error has occurred while downloading the app<br/>
@@ -63,6 +63,42 @@ Download a new Haddock image
 - `progress`:
     - `current`: the number of bytes downloaded
     - `total`: the total number of bytes to download
+
+## PATCH /api/app
+```http request
+PATCH http://dummy-host.com/api/app
+```
+### Description
+Create a new Haddock app
+
+### Body
+A [JSON representation](../../api/database/apps.go) of the app, if an empty field is provided, the existing field will be removed.
+
+### Events
+**`APP_DOWNLOAD_ERROR`:** tells that an error has occurred while downloading the app<br/>
+- `image_name`: the concerned image
+
+<br/>
+
+**`APP_DOWNLOAD_COMPLETE`:** tells that an app have been successfully downloaded <br/>
+- `image_name`: the concerned image
+
+<br/>
+
+**`APP_DOWNLOAD_PROGRESS`:**
+- `image_name`: the concerned image
+- `progress`:
+  - `current`: the number of bytes downloaded
+  - `total`: the total number of bytes to download
+
+<br/>
+
+**`APP_EXTRACT_PROGRESS`:** <br/>
+- `image_name`: the concerned image
+- `progress`:
+  - `current`: the number of bytes downloaded
+  - `total`: the total number of bytes to download
+
 
 ## DELETE /api/app
 ```http request
