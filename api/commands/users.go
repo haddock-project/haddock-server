@@ -5,7 +5,6 @@ import (
 )
 
 func GetUser(ctx *fiber.Ctx) error {
-
 	return nil
 }
 

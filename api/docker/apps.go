@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Kalitsune/Haddock/api/events"
-	"github.com/Kalitsune/Haddock/utils"
+	"github.com/Kalitsune/Haddock/server/utils"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/registry"

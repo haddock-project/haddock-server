@@ -6,7 +6,7 @@ import (
 	"errors"
 	"github.com/Kalitsune/Haddock/api/database"
 	"github.com/Kalitsune/Haddock/api/docker"
-	"github.com/Kalitsune/Haddock/utils"
+	"github.com/Kalitsune/Haddock/server/utils"
 	"github.com/docker/docker/api/types"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
