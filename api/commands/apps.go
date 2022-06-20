@@ -106,7 +106,7 @@ func PostApp(ctx *fiber.Ctx) error {
 	})
 }
 
-func PatchImage(ctx *fiber.Ctx) error {
+func PatchApp(ctx *fiber.Ctx) error {
 	var newApp database.App
 
 	err := ctx.BodyParser(&newApp)

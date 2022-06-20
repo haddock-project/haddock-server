@@ -26,7 +26,7 @@ func initTables() error {
 	var err error
 
 	//init the user table
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS `users` (`user_name` varchar(255) NOT NULL PRIMARY KEY,`user_password` varchar(255) NOT NULL, `password_reset` BOOLEAN NOT NULL CHECK (password_reset IN (0, 1)));")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS `users` (`user_name` varchar(255) NOT NULL UNIQUE PRIMARY KEY,`user_password` varchar(255) NOT NULL, `user_icon` BLOB, `user_permissions` INT DEFAULT 0, `password_reset` BOOLEAN NOT NULL CHECK (password_reset IN (0, 1)));")
 	if err != nil {
 		return err
 	}

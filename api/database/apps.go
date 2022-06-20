@@ -19,14 +19,16 @@ type App struct {
 	RepoName    string    `json:"repo_name"`
 }
 
-//Set bundle a container with infos about the app (it also generates a database id)
+//Set update an existing app or create a new one
 func (app *App) Set() error {
 	//check if the icon field is an image
 	app.CheckIcon()
 
 	// insert the app into the database / update
-	_, err := db.Exec("INSERT INTO apps (app_uuid, app_name, app_icon, app_description, app_version, app_url, repo_url, repo_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"+
-		"ON CONFLICT(app_uuid) DO UPDATE SET (app_name, app_icon, app_description, app_version, app_url, repo_url, repo_name) = (?, ?, ?, ?, ?, ?, ?)", app.UUID, app.Name, app.Icon, app.Description, app.Version, app.AppUrl, app.RepoUrl, app.RepoName, app.Name, app.Icon, app.Description, app.Version, app.AppUrl, app.RepoUrl, app.RepoName)
+	_, err := db.Exec(
+		"INSERT INTO apps (app_uuid, app_name, app_icon, app_description, app_version, app_url, repo_url, repo_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)"+
+			"ON CONFLICT(app_uuid) DO UPDATE SET (app_name, app_icon, app_description, app_version, app_url, repo_url, repo_name) = ($2, $3, $4, $5, $6, $7, $8)",
+		app.UUID, app.Name, app.Icon, app.Description, app.Version, app.AppUrl, app.RepoUrl, app.RepoName)
 
 	return err
 }

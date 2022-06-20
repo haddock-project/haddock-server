@@ -13,7 +13,8 @@ func Init(app *fiber.App) {
 	api := app.Group("/api")
 
 	ws := api.Group("/ws")
-	container := api.Group("/app")
+	applications := api.Group("/app")
+	users := api.Group("/user")
 
 	/*
 		Define the websocket routes
@@ -24,8 +25,17 @@ func Init(app *fiber.App) {
 	/*
 		Define the App routes
 	*/
-	container.Get("/", commands.GetApp)
-	container.Post("/", commands.PostApp)
-	container.Patch("/", commands.PatchImage)
-	container.Delete("/", commands.DeleteApp) //TODO: test
+	applications.Get("/", commands.GetApp)
+	applications.Post("/", commands.PostApp)
+	applications.Patch("/", commands.PatchApp)
+	applications.Delete("/", commands.DeleteApp)
+
+	/*
+		Define the User routes
+	*/
+	users.Get("/", commands.GetUser)
+	users.Post("/auth", commands.AuthUser)
+	users.Post("/", commands.PostUser)
+	users.Patch("/", commands.PatchUser)
+	users.Delete("/", commands.DeleteUser)
 }
