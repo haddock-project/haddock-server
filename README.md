@@ -20,4 +20,4 @@ Haddock failed to access the docker deamon socket, verify that docker is install
 It can also happen because the docker socket path is different in your environment, please submit an issue ^^
 
 ## My issue isn't covered
-Please open a **GitHub issue**, we'll try to assist you!
+Please open a [GitHub issue](https://github.com/haddock-project/haddock-server/issues), we'll try to assist you!
