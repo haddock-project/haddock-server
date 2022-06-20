@@ -1,8 +1,14 @@
 package config
 
 import (
+	"bufio"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
+	"errors"
 	"log"
-	"math/rand"
+	"os"
 )
 
 func GetallowAnonymousUsers() bool {
@@ -13,26 +19,92 @@ func GetDebugMode() bool {
 	return props.GetBool("debugMode", false)
 }
 
-func GetPrivateKey() string {
-	return props.GetString("privateKey", "")
+//GetPrivateKey reads the server's RSA keypair from the file system
+func GetPrivateKey() *rsa.PrivateKey {
+	// To the fellows developers that are reading this,
+	// Check out the following article about saving rsa keypair as pem files:
+	// https://medium.com/@Raulgzm/export-import-pem-files-in-go-67614624adc7
+
+	//open the private key file
+	pemFile, err := os.Open("data/haddock.pem")
+	if err != nil {
+		//if the file doesn't exist, generate a new keypair
+		if errors.Is(err, os.ErrNotExist) {
+			log.Println("[WARNING] Server's private key not found. Generating a new one...")
+			return GeneratePrivateKey()
+		}
+		log.Fatal("Error while opening server's PEM key: ", err)
+	}
+	defer pemFile.Close()
+
+	//Create a buffer to contain the PEM file's content
+	pemFileInfo, _ := pemFile.Stat()
+	pemBytes := make([]byte, pemFileInfo.Size())
+
+	buffer := bufio.NewReader(pemFile)
+	_, err = buffer.Read(pemBytes)
+	if err != nil {
+		if GetDebugMode() {
+			log.Println("[FATAL] Internal server error while decoding the PEM file: \nError: ", err)
+		} else {
+			log.Println("[FATAL] Internal server error while decoding the PEM file.")
+		}
+		os.Exit(1)
+	}
+
+	//decode the PEM file
+	data, _ := pem.Decode(pemBytes)
+	if err != nil {
+		if GetDebugMode() {
+			log.Println("[FATAL] Internal server error while decoding the server's PEM key: \nError: ", err)
+		} else {
+			log.Println("[FATAL] Internal server error while decoding the server's PEM key.")
+		}
+		os.Exit(1)
+	}
+
+	//parse the data into a rsa PrivateKey
+	privateKey, err := x509.ParsePKCS1PrivateKey(data.Bytes)
+	if err != nil {
+		if GetDebugMode() {
+			log.Println("[FATAL] Internal server error while parsing the server's PEM key: \nError: ", err)
+		} else {
+			log.Println("[FATAL] Internal server error while parsing the server's PEM key.")
+		}
+		os.Exit(1)
+	}
+
+	return privateKey
 }
 
-func GeneratePrivateKey() {
-	//generate a private key using crypto/rand
-	privateKey := make([]byte, 32)
-	_, err := rand.Read(privateKey)
+//GeneratePrivateKey generates a new RSA keypair and saves it to the file system
+func GeneratePrivateKey() *rsa.PrivateKey {
+	// To the fellows developers that are reading this,
+	// Check out the following article about saving rsa keypair as pem files:
+	// https://medium.com/@Raulgzm/export-import-pem-files-in-go-67614624adc7
+
+	//generate a private key using crypto/rsa
+	privateKey, err := rsa.GenerateKey(rand.Reader, 1024)
 	if err != nil {
-		log.Fatal("Error generating private key")
+		log.Fatal("Error generating server keypair: ", err)
 	}
 
-	//update the property
-	_, _, err = props.Set("privateKey", string(privateKey))
+	// PEM FILE
+	// save PEM file (check out more about pem files here: https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail)
+	pemFile, err := os.Create("data/haddock.pem")
 	if err != nil {
-		log.Fatalln("Failed to generate private key, try to restart: \n", err)
+		log.Fatal("Error while saving server's PEM key: ", err)
+	}
+	defer pemFile.Close()
+
+	// http://golang.org/pkg/encoding/pem/#Block
+	var pemKey = &pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(privateKey)}
+
+	if err = pem.Encode(pemFile, pemKey); err != nil {
+		log.Fatal("Error while saving server's PEM key: ", err)
 	}
 
-	//save the new property
-	if err := Save(props); err != nil {
-		log.Fatalln("Failed to save private key, try to restart: \n", err)
-	}
+	return privateKey
 }

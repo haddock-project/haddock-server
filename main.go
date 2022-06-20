@@ -12,7 +12,7 @@ import (
 func main() {
 	log.Println("Starting Haddock server!")
 
-	//get config
+	//init config
 	config.Init()
 	log.Println("Config:  READY")
 
@@ -25,11 +25,7 @@ func main() {
 	log.Println("Sqlite:  READY ")
 
 	// ensure server's private key is generated
-	if key := config.GetPrivateKey(); key == "" {
-		log.Println("[Generating server's private key...]")
-		config.GeneratePrivateKey()
-		log.Println("Server's private key generated!")
-	}
+	config.GetPrivateKey()
 
 	//create webserver using https://github.com/gofiber/fiber
 	app := fiber.New()
