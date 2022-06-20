@@ -1,6 +1,10 @@
 # Hadock
 Hadock is an open source project meant to provide everyday apps trought a docker Ecosystem. This allow you to manage which app do you want and easely share app environements.
 
+# Documentation
+* [Api](server/api/README.md)
+* [Properties](server/properties/README.md)
+
 # Install
 You need to clone the projet like this:
 `git clone https://github.com/hadock-project/hadock-server`<br/>
