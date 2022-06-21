@@ -81,11 +81,12 @@ func GetPrivateKey() *rsa.PrivateKey {
 	privateKey, err := x509.ParsePKCS1PrivateKey(data.Bytes)
 	if err != nil {
 		if GetDebugMode() {
-			log.Println("[FATAL] Internal server error while parsing the server's PEM key: \nError: ", err)
+			log.Print("[WARNING] Internal server error while parsing the server's PEM key. Generating a new one... \nError: ", err)
 		} else {
-			log.Println("[FATAL] Internal server error while parsing the server's PEM key.")
+			log.Print("[WARNING] Internal server error while parsing the server's PEM key. Generating a new one...")
 		}
-		os.Exit(1)
+
+		return GeneratePrivateKey()
 	}
 
 	return privateKey
