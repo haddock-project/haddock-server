@@ -71,6 +71,12 @@ func GetPrivateKey() *rsa.PrivateKey {
 		os.Exit(1)
 	}
 
+	//if data is nil then the pem file is invalid, gen a new key
+	if data == nil {
+		log.Println("[WARNING] Server's private key is invalid or corrupted. Generating a new one...")
+		return GeneratePrivateKey()
+	}
+
 	//parse the data into a rsa PrivateKey
 	privateKey, err := x509.ParsePKCS1PrivateKey(data.Bytes)
 	if err != nil {
