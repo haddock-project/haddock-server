@@ -6,3 +6,4 @@ Haddock server generate a server.properties file in the data directory (which ca
 | allowAnonymousUsers | false                | Define if haddock should allow anonymous users to use your haddock server                                           |
 | debugMode           | false                | Recommended for development, show error details (Fatal errors will always be shown independently from this setting) |
 | dockerSocketPath    | /var/run/docker.sock | Path to the docker socket                                                                                           |
+| host                | ":8080"              | Host to listen on, should contain a port                                                                            |

@@ -23,6 +23,10 @@ func GetDockerSocketPath() string {
 	return props.GetString("dockerSocketPath", "unix:///var/run/docker.sock")
 }
 
+func GetHost() string {
+	return props.GetString("host", ":8080")
+}
+
 //GetPrivateKey reads the server's RSA keypair from the file system
 func GetPrivateKey() *rsa.PrivateKey {
 	// To the fellows developers that are reading this,
