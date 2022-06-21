@@ -16,7 +16,7 @@ func main() {
 	config.Init()
 	log.Println("Config:  READY")
 
-	//init docker api.go
+	//init docker routes.go
 	docker.Init()
 	log.Println("Docker:  READY ")
 
