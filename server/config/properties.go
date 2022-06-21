@@ -19,6 +19,10 @@ func GetDebugMode() bool {
 	return props.GetBool("debugMode", false)
 }
 
+func GetDockerSocketPath() string {
+	return props.GetString("dockerSocketPath", "unix:///var/run/docker.sock")
+}
+
 //GetPrivateKey reads the server's RSA keypair from the file system
 func GetPrivateKey() *rsa.PrivateKey {
 	// To the fellows developers that are reading this,
