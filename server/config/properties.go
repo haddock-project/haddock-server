@@ -9,6 +9,8 @@ import (
 	"errors"
 	"log"
 	"os"
+	"strings"
+	"time"
 )
 
 func GetallowAnonymousUsers() bool {
@@ -25,6 +27,50 @@ func GetDockerSocketPath() string {
 
 func GetHost() string {
 	return props.GetString("host", ":8080")
+}
+
+func GetTokenExpiration() time.Time {
+	prop := props.GetString("tokenExpiration", "2h")
+
+	//disable token expiration
+	if strings.HasPrefix(prop, "0") {
+		return time.Time{}
+	}
+
+	duration, err := time.ParseDuration(prop)
+	if err != nil {
+		//Saving the default setting
+		log.Println("[WARNING] Invalid token expiration duration. Using default value of 2 hours.")
+		props.Set("tokenExpiration", "2h")
+		Save(props)
+
+		//Return the default value
+		return time.Now().Add(10 * time.Hour)
+	}
+
+	return time.Now().Add(duration)
+}
+
+func GetRememberMeTokenExpiration() time.Time {
+	prop := props.GetString("rememberMeTokenExpiration", "240h")
+
+	//disable token expiration
+	if strings.HasPrefix(prop, "0") {
+		return time.Time{}
+	}
+
+	duration, err := time.ParseDuration(prop)
+	if err != nil {
+		//Saving the default setting
+		log.Println("[WARNING] Invalid 'remember me' token expiration duration. Using default value of 240 hours.")
+		props.Set("rememberMeTokenExpiration", "240h")
+		Save(props)
+
+		//Return the default value
+		return time.Now().Add(10 * time.Hour)
+	}
+
+	return time.Now().Add(duration)
 }
 
 //GetPrivateKey reads the server's RSA keypair from the file system
@@ -83,7 +129,7 @@ func GetPrivateKey() *rsa.PrivateKey {
 		if GetDebugMode() {
 			log.Print("[WARNING] Internal server error while parsing the server's PEM key. Generating a new one... \nError: ", err)
 		} else {
-			log.Print("[WARNING] Internal server error while parsing the server's PEM key. Generating a new one...")
+			log.Print("[WARNING] Internal server error while parsing the server's PEM key. Generating a new one...aaa")
 		}
 
 		return GeneratePrivateKey()
@@ -99,7 +145,7 @@ func GeneratePrivateKey() *rsa.PrivateKey {
 	// https://medium.com/@Raulgzm/export-import-pem-files-in-go-67614624adc7
 
 	//generate a private key using crypto/rsa
-	privateKey, err := rsa.GenerateKey(rand.Reader, 1024)
+	privateKey, err := rsa.GenerateKey(rand.Reader, 4096)
 	if err != nil {
 		log.Fatal("Error generating server keypair: ", err)
 	}
