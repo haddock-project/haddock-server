@@ -5,14 +5,14 @@ here you can find a description of existing the api routes and the expected argu
 
 ## GET /api/ws
 ```http request
-GET http://dummy-host.com/api/ws?token=xxxxxx
+GET http://dummy-host.com/api/ws
 ```
 ### Description
 It's the entrypoint of the websocket
 connect to receive events from the api.
 
-###Args
-**`token`:** auth token (not implemented yet)
+### Headers
+**`Authorization`:** Bearer [auth token]
 
 
 
@@ -25,10 +25,10 @@ connect to receive events from the api.
 GET http://dummy-host.com/api/app?app=xxxxxx
 ```
 ### Description
-List all Haddock's images
+List all Haddock's images/get a specific app
 
 ### Args
-**`app`:** (optional) filters the results (e.g. `?app=busybox`)
+**`app`:** (optional) get a specific app (e.g. `?app=busybox`)
 
 
 
@@ -39,6 +39,9 @@ POST http://dummy-host.com/api/app
 ```
 ### Description
 Create a new Haddock app
+
+### Headers
+**`Authorization`:** Bearer [auth token]
 
 ### Body
 A [JSON representation](../../api/database/apps.go) of the app, if a UUID is provided it will be overwritten.
@@ -81,6 +84,9 @@ Edit an existing Haddock app
 ### Body
 A [JSON representation](../../api/database/apps.go) of the app, if an empty field is provided, the existing field will be removed.
 
+### Headers
+**`Authorization`:** Bearer [auth token]
+
 ### Events
 **`APP_DOWNLOAD_ERROR`:** tells that an error has occurred while downloading the app<br/>
 - `image_name`: the concerned image
@@ -116,6 +122,9 @@ DELETE http://dummy-host.com/api/app?app=xxxxxx
 ### Description
 remove a Haddock image
 
+### Headers
+**`Authorization`:** Bearer [auth token]
+
 ### Args
 **`app`:** the dockerhub ID of the app you want to remove (e.g. `?app=busybox`)
 
@@ -128,13 +137,13 @@ remove a Haddock image
 
 ## GET /api/user
 ```http request
-GET http://dummy-host.com/api/user?token=xxxxx.yyyyy.zzzzz
+GET http://dummy-host.com/api/user
 ```
 ### Description
 returns a user object associated with the token
 
-### Args
-**`token`:** a [jwt](https://jwt.io/introduction) token associated with the user
+### Headers
+**`Authorization`:** Bearer [auth token]
 
 
 
@@ -145,23 +154,26 @@ POST http://dummy-host.com/api/user/auth
 ```
 
 ### Description
-Authenticate a Haddock user matching with the provided credentials
+returns a Haddock user token matching with the provided credentials
 
 ### Forms values
 **`username`:** the username of the user <br/>
-**`password`:** the password of the user
+**`password`:** the password of the user <br/>
+**`remember_me`:** (optional) if set to true, the token will be valid for the amount of time specified in the configuration file
 
 
 
-## POST /api/app
+## POST /api/user
 ```http request
-POST http://dummy-host.com/api/user?token=xxxxx.yyyyy.zzzzz
+POST http://dummy-host.com/api/user
 ```
 ### Description
 Create a new Haddock user
 
-### Args
-**`token` (optional):** a [jwt](https://jwt.io/introduction) token associated with an authorised user, is used when the server does not allow account creation by the user itself.
+require an authenticated user when the server does not allow account creation by the user itself.
+
+### Headers
+**`Authorization` (optional):** Bearer [auth token] 
 
 ### Body
 A [JSON representation](../../api/database/users.go) of the new user, if a UUID is provided it will be overwritten.
@@ -183,11 +195,13 @@ A [JSON representation](../../api/database/users.go) of the user, if an empty fi
 
 ## DELETE /api/user
 ```http request
-DELETE http://dummy-host.com/api/user?user=xxxxx?token=xxxxx.yyyyy.zzzzz
+DELETE http://dummy-host.com/api/user
 ```
 ### Description
 Delete an existing Haddock user
 
+### Headers
+**`Authorization`:** Bearer [auth token]
+
 ### Args
 **`user`:** the user to delete uuid. <br/>
-**`token`:** a [jwt](https://jwt.io/introduction) token associated with an authorised user.

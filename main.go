@@ -36,6 +36,6 @@ func main() {
 	routes.Init(app)
 	log.Println("Fiber:   READY")
 
-	//listen on port 8080
+	//listen on specified port
 	log.Fatal(app.Listen(config.GetHost()))
 }
