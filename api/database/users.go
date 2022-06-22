@@ -3,7 +3,6 @@ package database
 import (
 	"errors"
 	"github.com/google/uuid"
-	"go/token"
 	"golang.org/x/crypto/bcrypt"
 	"math/rand"
 	"strings"
@@ -19,7 +18,6 @@ type User struct {
 	UUID              uuid.UUID       `json:"uuid"`
 	Name              string          `json:"name"`
 	Icon              string          `json:"profile_picture"`
-	Token             token.Token     `json:"token"`
 	Permissions       map[string]bool `json:"permissions"`
 	Password          string
 	NeedPasswordReset bool
@@ -85,7 +83,7 @@ func (user *User) Set() error {
 // Get fills the user object from its Name
 func (user *User) Get() error {
 	var perms int
-	err := db.QueryRow("SELECT user_password, password_reset, user_icon, user_permissions FROM users   WHERE user_name = ?", user.Name).Scan(&user.Password, &user.NeedPasswordReset, &user.Icon, perms)
+	err := db.QueryRow("SELECT user_password, password_reset, user_icon, user_permissions FROM users   WHERE user_name = ?", user.Name).Scan(&user.Password, &user.NeedPasswordReset, &user.Icon, &perms)
 	if err != nil {
 		return err
 	}
