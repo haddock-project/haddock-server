@@ -17,7 +17,6 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/savsgio/gotils v0.0.0-20220201163454-d252f0a44d5b // indirect
-	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
-	golang.org/x/sys v0.0.0-20220307203707-22a9840ba4d7 // indirect
+	golang.org/x/crypto v0.1.0
 	google.golang.org/grpc v1.45.0 // indirect
 )
